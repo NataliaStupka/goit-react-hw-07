@@ -10,7 +10,7 @@ import {
 } from "../../redux/selectors";
 
 import { useEffect } from "react";
-import { fetchContacts } from "../../redux/operations"; //запит на бекенд
+import { fetchContacts } from "../../redux/contactsOps"; //запит на бекенд
 import Loader from "../Loader/Loader";
 
 const ContactList = () => {
