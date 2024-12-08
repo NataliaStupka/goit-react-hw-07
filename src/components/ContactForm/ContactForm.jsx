@@ -4,7 +4,7 @@ import { nanoid } from "nanoid"; //id //включений в Redux
 import s from "./ContactForm.module.css";
 
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactSlice";
+import { addContact } from "../../redux/operations";
 
 const ContactForm = () => {
   //початкові значення форми, (прописуємо у Formik)

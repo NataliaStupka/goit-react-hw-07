@@ -20,11 +20,7 @@ const slice = createSlice({
 //action
 export const { changeFilter } = slice.actions;
 
-////useSelector
-//state - загальний(store), contact - назва слайсу, filter - занчення в initialState
-export const selectSearchFilter = (state) => {
-  return state.filter.searchContact;
-};
+//selector --> selector.js
 
 //експортуємо slice (reducer)
 export const filterReducer = slice.reducer; //використовуємо в //обгортка persist

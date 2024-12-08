@@ -4,6 +4,7 @@ import { changeFilter } from "../../redux/filtersSlice";
 
 const SearchBox = () => {
   const dispatch = useDispatch();
+
   return (
     <div className={s.searchWrapper}>
       <p>Find contact by name</p>

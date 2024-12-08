@@ -34,6 +34,7 @@
 - npm i nanoid (генерування id) - автоматично є в Redux
 
 21. npm i react-icons
+22. npm i react-loader-spinner
 
 <!-- Redux -->
 
@@ -44,29 +45,47 @@
 **--- Виконання д/з #7 ---**
 
 - При створенні нового контакту додавати йому унікальний ідентифікатор більше не потрібно, це буде робити сам бекенд і повертати у відповідь об’єкт нового контакту.
+  ЗАВДАННЯ:
 
-- прибрати персіст
-- взаємодія із сервером
-- замінити reducers на extraReducers
+- замінити reducers на extraReducers filter **?????**
 - Мемоізація
 
-1.
-2.
-3. **--- Виконання д/з #6 ---**
+_Скопіювали 6 дз._
 
-4. створюємо папку redux, в ній файли:
+1. в запитах (файл **operations**) використовуємо **createAsyncThunk**(рядок, функція-запит)
+2. (GET) fetchContacts - викликаємо в **contactList** через dispatch та useEffect(()=>{},[])-запускається на стадії монтування
+3. також відловлюємо цей запит в **slice**, через extraReducers: (builder) {
+   **builder.addCase**(fetch.fulfield(або pending, або rejected), (state, action) => {state.items = action.payload})
+   } - builder будує випадки для роботи
+4. в **slice** замінить старий selectContacts, рендерить контакти з бекенду
+5. для опрацьовування помилки запиту використовуємо **thunkAPI.rejectWithValue()**
+6. - прибрати персіст (так як працюємо з сервером, LocalStorage не потрібен)
+7. Логіку з компонентив перенесено в selectors.js;
+8. селектор створений за допомогою **createSelector** буде **мемоізований**,
+   // тобто який перераховує contacts, коли змінюється значення state.contacts
+   //або state.filter;
+9. createSelector([інші селектрои, що будемо використовувати], (результат виконання селектрорів) => {
+   return 'що потрібно зробити'
+   })
+   <!--  -->
+   <!--  -->
+   <!--  -->
+
+**--- Виконання д/з #6 ---**
+
+9. створюємо папку redux, в ній файли:
    1.1. store.js,
    1.2. contactSlise.js(initialState, slice(name; initialState,
    reducers) + import { createSlice } from '@reduxjs/toolkit'; selectors (не завжди зручно в slice))
-5. експортуємо slice як contactReducer і пидключаємо його в store
-6. на **store.js** використовуємо configureStore - для створення store, повертає новий
-   об'єкт store
-7. на **main** огорнути <Provider store={store}>, (приймає **пропс store**) - зв'язує store з компонентами React, щоб вони могли отримувати доступ до його стану та методів. обертаємо Provider все дерево компонентів (щоб будь-який компонент у додатку міг використовувати стор);
-8. useSelector в slice
-9. const dispatch = useDispatch(); dispatch(addContact(newContact)) - приклад; newContact - як аргумент. в slice буде action.payload. Відправка екшенів
-10. useSelector() - витягуємо дані
-11. actions передаємо у компоненти
-12. **redux-persist** - (npm i redux-persist) бібліотека як _LocalStorige_
+10. експортуємо slice як contactReducer і пидключаємо його в store
+11. на **store.js** використовуємо configureStore - для створення store, повертає новий
+    об'єкт store
+12. на **main** огорнути <Provider store={store}>, (приймає **пропс store**) - зв'язує store з компонентами React, щоб вони могли отримувати доступ до його стану та методів. обертаємо Provider все дерево компонентів (щоб будь-який компонент у додатку міг використовувати стор);
+13. useSelector в slice
+14. const dispatch = useDispatch(); dispatch(addContact(newContact)) - приклад; newContact - як аргумент. в slice буде action.payload. Відправка екшенів
+15. useSelector() - витягуємо дані
+16. actions передаємо у компоненти
+17. **redux-persist** - (npm i redux-persist) бібліотека як _LocalStorige_
     для Redux (документацію можна знайти в redux-toolkit через пошук 'Use with
     Redux-Persist). (1)другий та третій імпорт з докум.Redux-Persist вставляємо в
     **store**; (2) копіюємо persistConfig, persistedReducer, middleware, persistor -

@@ -1,39 +1,52 @@
 import Contact from "../Contact/Contact";
 import s from "./ContactList.module.css";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { selectContacts } from "../../redux/contactSlice"; //useSelector
-import { selectSearchFilter } from "../../redux/filtersSlice";
+import {
+  selectFilteredContactsMemo,
+  selectIsError,
+  selectIsLoading,
+} from "../../redux/selectors";
+
+import { useEffect } from "react";
+import { fetchContacts } from "../../redux/operations"; //запит на бекенд
+import Loader from "../Loader/Loader";
 
 const ContactList = () => {
-  //контакти
-  const contacts = useSelector(selectContacts); //from contactSlice, selectContacts = (state) => state.contact.items
+  //-------------------
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+  //===================
 
-  //для рендера не просто contacts, а і відфільтрованого
-  const filter = useSelector(selectSearchFilter); //що ввели в поле пошуку
+  const isError = useSelector(selectIsError);
+  const isLoading = useSelector(selectIsLoading);
 
-  // const getFiltredContacts = () => {
-  //   return filter
-  //     ? contacts.filter((item) =>
-  //         item.name.toLowerCase().includes(filter.toLowerCase())
-  //       )
-  //     : contacts;
-  // };
-  // const filterContact = getFiltredContacts();
-
-  const filterContact = contacts.filter((item) =>
-    item.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const contacts = useSelector(selectFilteredContactsMemo); //з фільтрацією
+  //--==-- логіка фільтрації в selectors.js (selectFilteredContacts)
 
   return (
-    <ul className={s.list}>
-      {filterContact.map((contact) => (
-        <li key={contact.id} className={s.item}>
-          <Contact data={contact} />
-        </li>
-      ))}
-    </ul>
+    <>
+      {isLoading && <Loader />}
+      <ul className={s.list}>
+        {isError && (
+          <h2 style={{ margin: "25px" }}>
+            An error occurred, please restart or try again later.
+          </h2>
+        )}
+
+        {contacts.length === 0 && !isError && !isLoading && (
+          <h2 className={s.textEmpty}>Nothing found</h2>
+        )}
+        {contacts.map((contact) => (
+          <li key={contact.id} className={s.item}>
+            <Contact data={contact} />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 

@@ -1,32 +1,73 @@
-import items from "../assets/contacts.json"; //початкові контакти
-
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { fetchContacts, deleteContact, addContact } from "./operations";
 
 //початковий стан контакти
 const initialState = {
-  items,
+  items: [],
+  isLoading: false,
+  isError: null,
 };
 
 const slice = createSlice({
   name: "contacts",
   initialState,
-  reducers: {
-    addContact: (state, action) => {
-      state.items.push(action.payload); //пишемо за допомогою imer
-    },
 
-    deleteContact: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
-    },
+  //відбувається за межами
+  extraReducers: (builder) => {
+    builder
+      //--запит
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      //--видалення контакта
+      .addCase(deleteContact.fulfilled, (state, { payload }) => {
+        state.items = state.items.filter((item) => item.id !== payload.id); //локально видаляємо на стороні клієнта
+      })
+      //--додавання контакту
+      .addCase(addContact.fulfilled, (state, { payload }) => {
+        state.items.push(payload);
+      })
+
+      //-- addMatcher --//
+      //== стан в очікуванні - pending
+      .addMatcher(
+        isAnyOf(
+          fetchContacts.pending,
+          deleteContact.pending,
+          addContact.pending
+        ),
+        (state, action) => {
+          state.isLoading = true;
+          state.isError = false;
+        }
+      )
+      //== стан успіх - fulfilled
+      .addMatcher(
+        isAnyOf(
+          fetchContacts.fulfilled,
+          deleteContact.fulfilled,
+          addContact.fulfilled
+        ),
+        (state) => {
+          state.isLoading = false;
+        }
+      )
+      //== стан помилка - regected
+      .addMatcher(
+        isAnyOf(
+          fetchContacts.rejected,
+          deleteContact.rejected,
+          addContact.rejected
+        ),
+        (state) => {
+          state.isLoading = false;
+          state.isError = true;
+        }
+      );
   },
 });
 
-//actions
-export const { addContact, deleteContact } = slice.actions;
+//selector --> selector.js
 
-//useSelector
-//state - загальний(store), contact - назва слайсу, items- занчення в initialState
-export const selectContacts = (state) => state.contact.items;
-
-//експортуємо slice (reducer)
-export const contactReducer = slice.reducer; //використовуємо в //обгортка persist
+//експортуємо slice (reducer) в store
+export const contactReducer = slice.reducer;
